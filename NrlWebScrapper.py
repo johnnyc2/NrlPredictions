@@ -1,8 +1,27 @@
-# testing commits
+#    NrlPredictions
+#    My attempt at building a web scrapper for the NRL.com website to scrape and create a database of match results and
+#    game play statistics. These statistics will be used as the basis of a predictive model.
+#
+#    Copyright (C) 2016  John Capito
+#
+#    This program is free software: you can redistribute it and/or modify
+#    it under the terms of the GNU General Public License as published by
+#    the Free Software Foundation, either version 3 of the License, or
+#    (at your option) any later version.
+#
+#    This program is distributed in the hope that it will be useful,
+#    but WITHOUT ANY WARRANTY; without even the implied warranty of
+#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    GNU General Public License for more details.
+#
+#    You should have received a copy of the GNU General Public License
+#    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 import requests
 from bs4 import BeautifulSoup
 import re
 from _datetime import datetime
+
 
 def formatTeamName(team):
     i = 0
@@ -14,13 +33,15 @@ def formatTeamName(team):
     team = team[0:8]
     return team
 
+
 def nrl_scraper():
-    url_round = 1354 # 1354 is Round 1 2016, 1379 is Round 26, 2016
+    url_round = 1354  # 1354 is Round 1 2016, 1379 is Round 26, 2016
     gameSeasonData = []
     postGame = True
     while postGame == True:
         # scrape and store data from url
-        url = 'http://www.nrl.com/Draw/TelstraPremiership/Draw/tabid/11180/s/44/r/' + str(url_round) + '/sc/cWOFGg40w000/default.aspx'
+        url = 'http://www.nrl.com/Draw/TelstraPremiership/Draw/tabid/11180/s/44/r/' + str(
+            url_round) + '/sc/cWOFGg40w000/default.aspx'
         source_code = requests.get(url)
         plain_text = source_code.text
         soup = BeautifulSoup(plain_text, "html.parser")
@@ -81,7 +102,8 @@ def nrl_scraper():
         homeTeam = formatTeamName(homeTeam)
         awayTeam = formatTeamName(awayTeam)
 
-        gameRoundData = list(zip(round, matchID, matchDate, matchCode, venueName, homeTeam, homeScore, awayTeam, awayScore))
+        gameRoundData = list(
+            zip(round, matchID, matchDate, matchCode, venueName, homeTeam, homeScore, awayTeam, awayScore))
         gameSeasonData.append(gameRoundData)
         url_round += 1
 
@@ -98,5 +120,6 @@ def nrl_scraper():
             gameDataFile.write('\n')
         gameDataFile.write('\n')
     gameDataFile.close()
+
 
 nrl_scraper()
